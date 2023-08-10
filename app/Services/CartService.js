@@ -26,8 +26,9 @@ class Cart {
     async insert({ req }) {
         const cart = await prisma.Cart.create({
             data: {
-                name: req.name,
-                price: req.price,
+                menuId: req.menuId,
+                quantity: req.quantity,
+                userId: req.userId
             }
         });
 
@@ -41,8 +42,8 @@ class Cart {
                     id: parseInt(id)
                 },
                 data: {
-                    name: req.name,
-                    price: req.price,
+                    menuId: req.menuId,
+                    quantity: req.quantity
                 }
             });
 
@@ -72,6 +73,52 @@ class Cart {
                 }
             }
         }
+    }
+
+    async checkout(userId) {
+        const carts = await prisma.Cart.findMany({
+            where: {
+                userId: parseInt(userId)
+            }
+        });
+
+        const totalPrice = carts.reduce((total, cart) => {
+            return total + cart.quantity * cart.Menu.price;
+        }, 0);
+
+        const order = {
+            carts,
+            totalPrice
+        }
+
+        carts.forEach(async cart => {
+            const menu = await prisma.Menu.findUnique({
+                where: {
+                    id: cart.menuId
+                }
+            });
+
+            if (menu.stock < cart.quantity) {
+                throw new Error('Stock is not enough');
+            }
+
+            await prisma.Menu.update({
+                where: {
+                    id: cart.menuId
+                },
+                data: {
+                    stock: menu.stock - cart.quantity
+                }
+            });
+        });
+
+        await prisma.Cart.deleteMany({
+            where: {
+                userId: parseInt(userId)
+            }
+        });
+
+        return order;
     }
 }
 

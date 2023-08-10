@@ -88,16 +88,78 @@ class User {
         }
     }
 
+    //ONE TIME USE ONLY!!!
+    //DELETE THIS FUNCTION AFTER USE!!!
+    async makeSuperAdmin(id) {
+        const role = await prisma.Role.findUnique({
+            where: {
+                id: 1
+            }
+        });
+
+        if (!role) {
+            const newRole = await prisma.Role.create({
+                data: {
+                    name: 'super-admin'
+                }
+            });
+        }
+
+        const roleUser = await prisma.Role_User.create({
+            data: {
+                userId: parseInt(id),
+                roleId: 1
+            }
+        });
+
+        return roleUser;
+    }
+
     async makeAdmin(id) {
+        const role = await prisma.Role.findUnique({
+            where: {
+                id: 2
+            }
+        });
+
+        if (!role) {
+            const newRole = await prisma.Role.create({
+                data: {
+                    name: 'admin'
+                }
+            });
+        }
+
+        const roleUser = await prisma.Role_User.create({
+            data: {
+                userId: parseInt(id),
+                roleId: 2
+            }
+        });
+        
+        return roleUser;
+    }
+
+    async getAdmin(id) {
+        const users = await prisma.Role_User.findMany({
+            where: {
+                userId: parseInt(id),
+            }
+        });
+
+        return users;
+    }
+
+    async removeRole(id) {
         const user = await prisma.User.update({
             where: {
                 id: parseInt(id)
             },
             data: {
-                role: 'admin'
+                role: null
             }
         });
-        
+
         return user;
     }
 

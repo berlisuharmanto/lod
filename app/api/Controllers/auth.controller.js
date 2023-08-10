@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { createToken } = require('../../utils/tokenManager');
 const UserService = require('../../Services/UserService');
 const authValidation = require('../../Validations/auth');
+const jwt = require('jsonwebtoken');
 const AuthenticateError = require('../../Exceptions/AuthenticationError');
 
 exports.register = async (req, res) => {
@@ -80,6 +81,26 @@ exports.login = async (req, res) => {
             message: 'Successfully logged in',
             data: userWithoutPassword,
             token: token
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+}
+
+exports.getMe = async (req, res) => {
+    try {
+        const token = req.headers?.authorization?.split(' ')[1];
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        const userService = new UserService();
+        const user = await userService.getById(decoded.id);
+
+        return res.status(200).json({
+            message: 'Successfully get user',
+            data: user
         });
     } catch (error) {
         return res.status(500).json({
