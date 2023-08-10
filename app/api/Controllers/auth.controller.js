@@ -1,10 +1,13 @@
 const bcrypt = require('bcrypt');
 const { createToken } = require('../../utils/tokenManager');
 const UserService = require('../../Services/UserService');
+const authValidation = require('../../Validations/auth');
 const AuthenticateError = require('../../Exceptions/AuthenticationError');
 
 exports.register = async (req, res) => {
     try {
+        authValidation.validateRegister(req.body);
+
         const { name, email, password } = req.body;
 
         const userService = new UserService();
@@ -47,6 +50,8 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
+        authValidation.validateLogin(req.body);
+        
         const { email, password } = req.body;
 
         const userService = new UserService();

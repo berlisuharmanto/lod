@@ -1,5 +1,5 @@
 const {PrismaClient, Prisma} = require('@prisma/client');
-const NotFoundError = require('../Exception/NotFoundError');
+const NotFoundError = require('../Exceptions/NotFoundError');
 
 const prisma = new PrismaClient();
 
@@ -11,31 +11,25 @@ class Menu {
     }
 
     async getById(id) {
-        try {
-            const menu = await prisma.Menu.findUnique({
-                where: {
-                    id: parseInt(id)
-                }
-            });
-            if (!menu) {
-                throw new NotFoundError('Not found');
+        const menu = await prisma.Menu.findUnique({
+            where: {
+                id: parseInt(id)
             }
+        });
 
-            return menu;
-        } catch (error){
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === 'P2025') {
-                    throw new NotFoundError('Not found');
-                }
-            }
+        if (!menu) {
+            throw new NotFoundError('Not found');
         }
+
+        return menu;
     }
 
     async insert({req}) {
-        const menu = new prisma.Menu.create({
+        const menu = await prisma.Menu.create({
             data: {
                 name: req.name,
                 price: req.price,
+                quantity: req.quantity
             }
         });
 
@@ -51,6 +45,7 @@ class Menu {
                 data: {
                     name: req.name,
                     price: req.price,
+                    quantity: req.quantity
                 }
             });
 

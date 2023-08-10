@@ -14,6 +14,7 @@ model Menu {
   id Int @id @default(autoincrement())
   name String @db.VarChar(255)
   price Int
+  quantity Int
   cart Cart[] @relation("CartToMenu")
 }
 
@@ -34,6 +35,25 @@ model User {
   email String @db.VarChar(255) @unique
   password String @db.VarChar(255)
   cart Cart[] @relation("CartToUser")
+  role Role_User[] @relation("RoleToUser")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Role {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(255)
+  role Role_User[] @relation("RoleToRole")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Role_User {
+  id Int @id @default(autoincrement())
+  userId Int
+  roleId Int
+  user User @relation("RoleToUser", fields: [userId], references: [id])
+  role Role @relation("RoleToRole", fields: [roleId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

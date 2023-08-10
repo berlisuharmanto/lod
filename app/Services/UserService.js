@@ -88,6 +88,19 @@ class User {
         }
     }
 
+    async makeAdmin(id) {
+        const user = await prisma.User.update({
+            where: {
+                id: parseInt(id)
+            },
+            data: {
+                role: 'admin'
+            }
+        });
+        
+        return user;
+    }
+
     async delete(id) {
         try {
             const user = await prisma.User.delete({

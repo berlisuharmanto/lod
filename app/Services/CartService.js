@@ -11,28 +11,20 @@ class Cart {
     }
 
     async getById(id) {
-        try {
-            const cart = await prisma.Cart.findUnique({
-                where: {
-                    id: parseInt(id)
-                }
-            });
-            if (!cart) {
-                throw new NotFoundError('Not found');
+        const cart = await prisma.Cart.findUnique({
+            where: {
+                id: parseInt(id)
             }
-
-            return cart;
-        } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === 'P2025') {
-                    throw new NotFoundError('Not found');
-                }
-            }
+        });
+        if (!cart) {
+            throw new NotFoundError('Not found');
         }
+
+        return cart;
     }
 
     async insert({ req }) {
-        const cart = new prisma.Cart.create({
+        const cart = await prisma.Cart.create({
             data: {
                 name: req.name,
                 price: req.price,
