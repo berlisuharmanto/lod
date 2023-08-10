@@ -1,5 +1,5 @@
-const { AUTH_ERR_MSG } = require('../constants/errorMessage');
-const { AUTH_ERR } = require('../constants/errorType');
+const { AUTH_ERR_MSG } = require('../Constants/errorMessages');
+const { AUTH_ERR } = require('../Constants/errorType');
 
 const ClientError = require('./ClientError');
 

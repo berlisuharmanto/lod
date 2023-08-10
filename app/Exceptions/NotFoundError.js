@@ -1,5 +1,5 @@
-const { NOT_FOUND_ERR_MSG } = require('../constants/errorMessage');
-const { NOT_FOUND_ERR } = require('../constants/errorType');
+const { NOT_FOUND_ERR_MSG } = require('../Constants/errorMessages');
+const { NOT_FOUND_ERR } = require('../Constants/errorType');
 
 const ClientError = require('./ClientError');
 

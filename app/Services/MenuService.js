@@ -1,4 +1,5 @@
 const {PrismaClient, Prisma} = require('@prisma/client');
+const NotFoundError = require('../Exception/NotFoundError');
 
 const prisma = new PrismaClient();
 
@@ -17,14 +18,14 @@ class Menu {
                 }
             });
             if (!menu) {
-                throw new Error('Tidak ada makanan dengan id tersebut');
+                throw new NotFoundError('Not found');
             }
 
             return menu;
         } catch (error){
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
-                    throw new Error('Tidak ada makanan dengan id tersebut');
+                    throw new NotFoundError('Not found');
                 }
             }
         }
@@ -57,7 +58,7 @@ class Menu {
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
-                    throw new Error('Tidak ada makanan dengan id tersebut');
+                    throw new NotFoundError('Not found');
                 }
             }
         }
@@ -75,7 +76,7 @@ class Menu {
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
-                    throw new Error('Tidak ada makanan dengan id tersebut');
+                    throw new NotFoundError('Not found');
                 }
             }
         }

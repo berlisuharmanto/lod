@@ -11,14 +11,14 @@ datasource db {
 }
 
 model Menu {
-  id Int @id
+  id Int @id @default(autoincrement())
   name String @db.VarChar(255)
   price Int
   cart Cart[] @relation("CartToMenu")
 }
 
 model Cart {
-  id Int @id
+  id Int @id @default(autoincrement())
   userId Int
   menuId Int
   quantity Int
@@ -29,7 +29,7 @@ model Cart {
 }
 
 model User {
-  id Int @id
+  id Int @id @default(autoincrement())
   name String @db.VarChar(255)
   email String @db.VarChar(255) @unique
   password String @db.VarChar(255)

@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE `Menu` (
-    `id` INTEGER NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     `price` INTEGER NOT NULL,
 
@@ -9,7 +9,7 @@ CREATE TABLE `Menu` (
 
 -- CreateTable
 CREATE TABLE `Cart` (
-    `id` INTEGER NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` INTEGER NOT NULL,
     `menuId` INTEGER NOT NULL,
     `quantity` INTEGER NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE `Cart` (
 
 -- CreateTable
 CREATE TABLE `User` (
-    `id` INTEGER NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `password` VARCHAR(255) NOT NULL,

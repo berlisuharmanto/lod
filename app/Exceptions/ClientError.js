@@ -1,5 +1,5 @@
-const { CLIENT_ERR_MSG } = require('../constants/errorMessage');
-const { CLIENT_ERR } = require('../constants/errorType');
+const { CLIENT_ERR_MSG } = require('../Constants/errorMessages');
+const { CLIENT_ERR } = require('../Constants/errorType');
 
 class ClientError extends Error {
     statusCode;

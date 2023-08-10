@@ -1,5 +1,5 @@
-const { FORBIDDES_ERR_MSG } = require('../constants/errorMessage');
-const { FORBIDDEN_ERR } = require('../constants/errorType');
+const { FORBIDDES_ERR_MSG } = require('../Constants/errorMessage');
+const { FORBIDDEN_ERR } = require('../Constants/errorType');
 
 const ClientError = require('./ClientError');
 

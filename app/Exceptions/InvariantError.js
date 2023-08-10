@@ -1,5 +1,5 @@
-const { INVARIANT_ERR_MSG } = require('../constants/errorMessage');
-const { INVARIANT_ERR } = require('../constants/errorType');
+const { INVARIANT_ERR_MSG } = require('../Constants/errorMessages');
+const { INVARIANT_ERR } = require('../Constants/errorType');
 
 const ClientError = require('./ClientError');
 
