@@ -1,19 +1,25 @@
 const { PrismaClient, Prisma } = require('@prisma/client');
-const NotFoundError = require('../Exception/NotFoundError');
+const NotFoundError = require('../Exceptions/NotFoundError');
+const InvariantError = require('../Exceptions/InvariantError');
 
 const prisma = new PrismaClient();
 
 class Cart {
-    async get() {
-        const results = await prisma.Cart.findMany();
+    async get(userId) {
+        const results = await prisma.Cart.findMany({
+            where: {
+                userId: parseInt(userId)
+            }
+        });
 
         return results;
     }
 
-    async getById(id) {
+    async getById(id, userId) {
         const cart = await prisma.Cart.findUnique({
             where: {
-                id: parseInt(id)
+                id: parseInt(id),
+                userId: parseInt(userId)
             }
         });
         if (!cart) {
@@ -24,6 +30,20 @@ class Cart {
     }
 
     async insert({ req }) {
+        const menu = await prisma.Menu.findUnique({
+            where: {
+                id: req.menuId
+            }
+        });
+
+        if (!menu) {
+            throw new NotFoundError('Not found');
+        }
+
+        if (menu.quantity < req.quantity) {
+            throw new InvariantError('Not enough quantity');
+        }
+
         const cart = await prisma.Cart.create({
             data: {
                 menuId: req.menuId,
@@ -35,11 +55,12 @@ class Cart {
         return cart;
     }
 
-    async update(id, { req }) {
+    async update(id, userId, { req }) {
         try {
             const cart = await prisma.Cart.update({
                 where: {
-                    id: parseInt(id)
+                    id: parseInt(id),
+                    userId: parseInt(userId)
                 },
                 data: {
                     menuId: req.menuId,
@@ -57,11 +78,12 @@ class Cart {
         }
     }
 
-    async delete(id) {
+    async delete(id, userId) {
         try {
             const cart = await prisma.Cart.delete({
                 where: {
-                    id: parseInt(id)
+                    id: parseInt(id),
+                    userId: parseInt(userId)
                 }
             });
 
@@ -79,27 +101,36 @@ class Cart {
         const carts = await prisma.Cart.findMany({
             where: {
                 userId: parseInt(userId)
+            },
+            include: {
+                menu: true
             }
         });
 
         const totalPrice = carts.reduce((total, cart) => {
-            return total + cart.quantity * cart.Menu.price;
+            return total + cart.quantity * cart.menu.price;
         }, 0);
 
         const order = {
-            carts,
+            carts : carts.map(cart => {
+                return {
+                    name: cart.menu.name,
+                    quantity: cart.quantity,
+                    price: cart.menu.price * cart.quantity
+                };
+            }),
             totalPrice
-        }
+        };
 
-        carts.forEach(async cart => {
+        for (const cart of carts) {
             const menu = await prisma.Menu.findUnique({
                 where: {
                     id: cart.menuId
                 }
             });
 
-            if (menu.stock < cart.quantity) {
-                throw new Error('Stock is not enough');
+            if (menu.quantity < cart.quantity) {
+                throw new InvariantError('Not enough quantity');
             }
 
             await prisma.Menu.update({
@@ -107,10 +138,10 @@ class Cart {
                     id: cart.menuId
                 },
                 data: {
-                    stock: menu.stock - cart.quantity
+                    quantity: menu.quantity - cart.quantity
                 }
             });
-        });
+        }
 
         await prisma.Cart.deleteMany({
             where: {

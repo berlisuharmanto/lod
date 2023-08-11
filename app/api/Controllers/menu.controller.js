@@ -1,7 +1,7 @@
 const MenuService = require('../../Services/MenuService');
 const menuValidation = require('../../Validations/menu');
 
-exports.get = async (req, res) => {
+exports.get = async (req, res, next) => {
     try {
         const menuService = new MenuService();
         const menus = await menuService.get();
@@ -11,13 +11,11 @@ exports.get = async (req, res) => {
             data: menus
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.getById = async (req, res) => {
+exports.getById = async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -29,13 +27,11 @@ exports.getById = async (req, res) => {
             data: menu
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.insert = async (req, res) => {
+exports.insert = async (req, res, next) => {
     try {
         menuValidation.validateInsert(req.body);
 
@@ -55,23 +51,22 @@ exports.insert = async (req, res) => {
             data: menu
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.update = async (req, res) => {
+exports.update = async (req, res, next) => {
     try {
         menuValidation.validateUpdate(req.body);
 
         const { id } = req.params;
-        const { name, price } = req.body;
+        const { name, quantity, price } = req.body;
 
         const menuService = new MenuService();
         const menu = await menuService.update(id, {
             req: {
                 name,
+                quantity,
                 price
             }
         });
@@ -81,13 +76,11 @@ exports.update = async (req, res) => {
             data: menu
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -99,8 +92,6 @@ exports.delete = async (req, res) => {
             data: menu
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }

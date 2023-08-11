@@ -1,11 +1,12 @@
 const bcrypt = require('bcrypt');
 const { createToken } = require('../../utils/tokenManager');
 const UserService = require('../../Services/UserService');
+const CartService = require('../../Services/CartService');
 const authValidation = require('../../Validations/auth');
 const jwt = require('jsonwebtoken');
 const AuthenticateError = require('../../Exceptions/AuthenticationError');
 
-exports.register = async (req, res) => {
+exports.register = async (req, res, next) => {
     try {
         authValidation.validateRegister(req.body);
 
@@ -43,13 +44,11 @@ exports.register = async (req, res) => {
             token: token
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 };
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
     try {
         authValidation.validateLogin(req.body);
         
@@ -83,13 +82,11 @@ exports.login = async (req, res) => {
             token: token
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.getMe = async (req, res) => {
+exports.getMe = async (req, res, next) => {
     try {
         const token = req.headers?.authorization?.split(' ')[1];
 
@@ -98,13 +95,45 @@ exports.getMe = async (req, res) => {
         const userService = new UserService();
         const user = await userService.getById(decoded.id);
 
+        const userWithoutPassword = {
+            id: user.id,
+            name: user.name,
+            email: user.email
+        };
+
         return res.status(200).json({
             message: 'Successfully get user',
-            data: user
+            data: userWithoutPassword
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
+        next(error);
+    }
+}
+
+exports.getOrder = async (req, res, next) => {
+    try {
+        const token = req.headers?.authorization?.split(' ')[1];
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        const userService = new UserService();
+        const user = await userService.getById(decoded.id);
+
+        const cartService = new CartService();
+        const cart = await cartService.get(decoded.id);
+
+        const userWithoutPassword = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            cart: cart
+        };
+
+        return res.status(200).json({
+            message: 'Successfully get user',
+            data: userWithoutPassword
         });
+    } catch (error) {
+        next(error);
     }
 }

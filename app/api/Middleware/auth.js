@@ -5,22 +5,20 @@ const jwt = require('jsonwebtoken');
 const authenticate = async (req,res,next) => {
     try {
         const bearerToken = req.headers?.authorization;
-        if (!bearerToken) {
-            throw new AuthenticationError('Authentication failed');
-        }
         const token = bearerToken.split(' ')[1];
+        if (!bearerToken || token == "null") {
+            throw new AuthenticationError('Unauthorized');
+        }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userService = new UserService();
         const user = await userService.getById(decoded.id);
         if (!user) {
-            throw new Error('Unauthorized');
+            throw new AuthenticationError('Unauthorized');
         }
         req.user = user;
         next();
     } catch (error) {
-        return res.status(401).json({
-            message: error.message
-        });
+        next(error);
     }
 };
 

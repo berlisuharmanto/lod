@@ -1,27 +1,29 @@
 const { SERVER_ERR } = require('../Constants/errorType');
 const ClientError = require('../Exceptions/ClientError');
 
-const clientErrResponse = (error) => ({
+const clientErrRes = (error) => ({
     success: false,
     message: error.message,
-    type: error.type,
+    type: error.type
 });
-
-const serverErrResponse = (error) => ({
+  
+const serverErrRes = (error) => ({
     success: false,
     message: error.message,
     type: SERVER_ERR,
+    error: process.env.NODE_ENV !== 'production' ? error.stack : undefined
 });
-
-const errorResponse = (res, error) => { 
+  
+const errorRes = (res, error) => {
     if (error instanceof ClientError) {
-        return res.status(error.statusCode).json(clientErrResponse(error));
+        return res.status(error.statusCode).json(clientErrRes(error));
     }
-    return res.status(500).json(serverErrResponse(error));
-};
 
+    return res.status(500).json(serverErrRes(error));
+};
+  
 module.exports = {
-    errorResponse,
-    serverErrResponse,
-    clientErrResponse,
+    errorRes,
+    clientErrRes,
+    serverErrRes
 }

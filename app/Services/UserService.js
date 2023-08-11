@@ -6,7 +6,12 @@ const prisma = new PrismaClient();
 
 class User {
     async get() {
-        const results = await prisma.User.findMany();
+        const results = await prisma.User.findMany({
+            include : {
+                cart: true,
+                role: true
+            }
+        });
 
         return results;
     }

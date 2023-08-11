@@ -24,6 +24,16 @@ class Menu {
         return menu;
     }
 
+    async getByName(name) {
+        const menu = await prisma.Menu.findMany({
+            where: {
+                name: name
+            }
+        });
+
+        return menu;
+    }
+
     async insert({req}) {
         const menu = await prisma.Menu.create({
             data: {

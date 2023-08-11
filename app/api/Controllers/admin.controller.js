@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { createToken } = require('../../utils/tokenManager');
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
     try {
         authValidation.validateLogin(req.body);
 
@@ -39,13 +39,11 @@ exports.login = async (req, res) => {
             token: token
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.getMe = async (req, res) => {
+exports.getMe = async (req, res, next) => {
     try {
         const token = req.headers?.authorization?.split(' ')[1];
 
@@ -54,34 +52,46 @@ exports.getMe = async (req, res) => {
         const userService = new UserService();
         const user = await userService.getById(decoded.id);
 
+        const userWithoutPassword = {
+            id: user.id,
+            name: user.name,
+            email: user.email
+        };
+
         return res.status(200).json({
             message: 'Successfully get user',
-            data: user
+            data: userWithoutPassword
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.getUsers = async (req, res) => {
+exports.getUsers = async (req, res, next) => {
     try {
         const userService = new UserService();
         const users = await userService.get();
 
         return res.status(200).json({
             message: 'Successfully get users',
-            data: users
+            data: users.map(user => {
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role.map(role => role.roleId),
+                    carts: user.cart,
+                    createdAt: user.createdAt,
+                    updatedAt: user.updatedAt
+                }
+            })
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.getById = async (req, res) => {
+exports.getById = async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -93,13 +103,11 @@ exports.getById = async (req, res) => {
             data: user
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.makeSuperAdmin = async (req, res) => {
+exports.makeSuperAdmin = async (req, res, next) => {
     try {
         const token = req.headers?.authorization?.split(' ')[1];
 
@@ -113,13 +121,11 @@ exports.makeSuperAdmin = async (req, res) => {
             data: user
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.makeAdmin = async (req, res) => {
+exports.makeAdmin = async (req, res, next) => {
     try {
         const { id } = req.body;
 
@@ -131,13 +137,11 @@ exports.makeAdmin = async (req, res) => {
             data: user
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.removeRole = async (req, res) => {
+exports.removeRole = async (req, res, next) => {
     try {
         const { id } = req.body;
 
@@ -149,13 +153,11 @@ exports.removeRole = async (req, res) => {
             data: user
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -167,8 +169,6 @@ exports.delete = async (req, res) => {
             data: user
         });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message
-        });
+        next(error);
     }
 }

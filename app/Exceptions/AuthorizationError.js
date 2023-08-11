@@ -1,4 +1,3 @@
-const { model } = require('mongoose');
 const { AUTHORIZATION_ERR_MSG } = require('../Constants/errorMessages');
 const { AUTHORIZATION_ERR } = require('../Constants/errorType');
 
