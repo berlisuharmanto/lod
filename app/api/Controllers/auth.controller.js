@@ -25,10 +25,13 @@ exports.register = async (req, res, next) => {
             }
         });
 
+        console.log(newUser);
+
         const userWithoutPassword = {
             id: newUser.id,
             name: newUser.name,
-            email: newUser.email
+            email: newUser.email,
+            address: newUser.address
         };
 
         const payload = {
@@ -66,7 +69,8 @@ exports.login = async (req, res, next) => {
         const userWithoutPassword = {
             id: user.id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            address: user.address
         };
 
         const payload = {

@@ -39,7 +39,8 @@ class Menu {
             data: {
                 name: req.name,
                 price: req.price,
-                quantity: req.quantity
+                quantity: req.quantity,
+                description: req.description
             }
         });
 

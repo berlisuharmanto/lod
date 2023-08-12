@@ -35,14 +35,15 @@ exports.insert = async (req, res, next) => {
     try {
         menuValidation.validateInsert(req.body);
 
-        const { name, price, quantity } = req.body;
+        const { name, price, quantity, description } = req.body;
 
         const menuService = new MenuService();
         const menu = await menuService.insert({
             req: {
                 name,
                 price,
-                quantity
+                quantity,
+                description,
             }
         });
 

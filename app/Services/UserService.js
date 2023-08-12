@@ -57,7 +57,8 @@ class User {
                 data: {
                     name: req.name,
                     email: req.email,
-                    password: req.password
+                    password: req.password,
+                    address: ""
                 }
             });
     
@@ -79,7 +80,7 @@ class User {
                 },
                 data: {
                     name: req.name,
-                    password: req.password,
+                    address: req.address
                 }
             });
 

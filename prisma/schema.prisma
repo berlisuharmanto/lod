@@ -13,6 +13,7 @@ datasource db {
 model Menu {
   id Int @id @default(autoincrement())
   name String @db.VarChar(255)
+  description String @db.VarChar(255)
   price Int
   quantity Int
   cart Cart[] @relation("CartToMenu")
@@ -34,8 +35,10 @@ model User {
   name String @db.VarChar(255)
   email String @db.VarChar(255) @unique
   password String @db.VarChar(255)
+  address String @db.VarChar(255)
   cart Cart[] @relation("CartToUser")
   role Role_User[] @relation("RoleToUser")
+  transaction Transaction[] @relation("TransactionToUser")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -54,6 +57,27 @@ model Role_User {
   roleId Int
   user User @relation("RoleToUser", fields: [userId], references: [id])
   role Role @relation("RoleToRole", fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id Int @id @default(autoincrement())
+  userId Int
+  totalPrice Int
+  user User @relation("TransactionToUser", fields: [userId], references: [id])
+  transactionList Transaction_List[] @relation("TransactionToTransactionList")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction_List {
+  id Int @id @default(autoincrement())
+  transactionId Int
+  name String @db.VarChar(255)
+  price Int
+  quantity Int
+  transaction Transaction @relation("TransactionToTransactionList", fields: [transactionId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
