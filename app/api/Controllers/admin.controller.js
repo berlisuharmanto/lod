@@ -43,30 +43,6 @@ exports.login = async (req, res, next) => {
     }
 }
 
-exports.getMe = async (req, res, next) => {
-    try {
-        const token = req.headers?.authorization?.split(' ')[1];
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        const userService = new UserService();
-        const user = await userService.getById(decoded.id);
-
-        const userWithoutPassword = {
-            id: user.id,
-            name: user.name,
-            email: user.email
-        };
-
-        return res.status(200).json({
-            message: 'Successfully get user',
-            data: userWithoutPassword
-        });
-    } catch (error) {
-        next(error);
-    }
-}
-
 exports.getUsers = async (req, res, next) => {
     try {
         const userService = new UserService();

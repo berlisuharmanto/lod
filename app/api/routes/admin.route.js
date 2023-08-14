@@ -18,7 +18,6 @@ router.delete('/menu/:id', adminMiddleware, menuController.delete);
 
 router.get('/users', adminMiddleware, adminController.getUsers);
 router.get('/users/make-admin', adminMiddleware, adminController.makeAdmin);
-// router.get('/users/me', adminMiddleware, adminController.getMe);
 router.get('/users/:id', adminMiddleware, adminController.getById);
 router.delete('/users/:id', adminMiddleware, adminController.delete);
 
