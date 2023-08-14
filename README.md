@@ -6,6 +6,15 @@ Jalankan `npm i` untuk install dependency
 
 Jalankan `npm install dotenv` khawatir tidak terinstall
 
+Pastikan buat .env file dengan isi
+
+```
+DATABASE_URL="mysql://root:@localhost:3306/lod" => Hanya contoh untuk formatnya mysql://user:@host:port/db
+JWT_SECRET="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SCKg2wVQSlrF2kBSHaelalFVroK9byCmagfIGAEQv_Q" => Bisa pakai saja langsung
+```
+
+Jalankan `npx prisma migrate dev --name innit` untuk migrasi pertama kali
+
 ### `npm run start`
 
 Untuk dokumentasi API terdapat pada
