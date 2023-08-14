@@ -115,7 +115,7 @@ exports.getOrder = async (req, res, next) => {
         const user = req.user;
 
         const transactionService = new TransactionService();
-        const transactions = await transactionService.get(user.id); console.log(transactions);
+        const transactions = await transactionService.get(user.id);
 
         const transactionWithoutPassword = [];
 
