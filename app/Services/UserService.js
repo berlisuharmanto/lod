@@ -111,6 +111,17 @@ class User {
             });
         }
 
+        const exist = await prisma.Role_User.findMany({
+            where: {
+                userId: parseInt(id),
+                roleId: 1
+            }
+        });
+
+        if (exist.length > 0) {
+            throw new AuthenticateError('User already super admin');
+        }
+
         const roleUser = await prisma.Role_User.create({
             data: {
                 userId: parseInt(id),

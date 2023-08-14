@@ -5,10 +5,17 @@ const jwt = require('jsonwebtoken');
 const authenticate = async (req,res,next) => {
     try {
         const bearerToken = req.headers?.authorization;
-        const token = bearerToken.split(' ')[1];
-        if (!bearerToken || token == "null") {
+
+        if (!bearerToken) {
             throw new AuthenticationError('Unauthorized');
         }
+
+        const token = bearerToken.split(' ')[1];
+
+        if (token == "null") {
+            throw new AuthenticationError('Unauthorized');
+        }
+        
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userService = new UserService();
         const user = await userService.getById(decoded.id);

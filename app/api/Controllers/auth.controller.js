@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const { createToken } = require('../../utils/tokenManager');
 const UserService = require('../../Services/UserService');
-const CartService = require('../../Services/CartService');
+const TransactionService = require('../../Services/TransactionService');
 const authValidation = require('../../Validations/auth');
 const jwt = require('jsonwebtoken');
 const AuthenticateError = require('../../Exceptions/AuthenticationError');
@@ -92,17 +92,13 @@ exports.login = async (req, res, next) => {
 
 exports.getMe = async (req, res, next) => {
     try {
-        const token = req.headers?.authorization?.split(' ')[1];
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        const userService = new UserService();
-        const user = await userService.getById(decoded.id);
+        const user = req.user;
 
         const userWithoutPassword = {
             id: user.id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            address: user.address
         };
 
         return res.status(200).json({
@@ -116,26 +112,31 @@ exports.getMe = async (req, res, next) => {
 
 exports.getOrder = async (req, res, next) => {
     try {
-        const token = req.headers?.authorization?.split(' ')[1];
+        const user = req.user;
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const transactionService = new TransactionService();
+        const transactions = await transactionService.get(user.id); console.log(transactions);
 
-        const userService = new UserService();
-        const user = await userService.getById(decoded.id);
+        const transactionWithoutPassword = [];
 
-        const cartService = new CartService();
-        const cart = await cartService.get(decoded.id);
-
-        const userWithoutPassword = {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            cart: cart
-        };
+        for (const transaction of transactions) {
+            transactionWithoutPassword.push({
+                id: transaction.id,
+                totalPrice: transaction.totalPrice,
+                transactionList: transaction.transactionList,
+                updatedAt: transaction.updatedAt
+            });
+        }
 
         return res.status(200).json({
-            message: 'Successfully get user',
-            data: userWithoutPassword
+            message: 'Successfully get transactions',
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                address: user.address
+            },
+            data: transactionWithoutPassword
         });
     } catch (error) {
         next(error);

@@ -98,6 +98,8 @@ exports.getById = async (req, res, next) => {
         const userService = new UserService();
         const user = await userService.getById(id);
 
+        if (!user) throw new AuthenticateError('User not found');
+
         return res.status(200).json({
             message: 'Successfully get user',
             data: user
@@ -109,12 +111,9 @@ exports.getById = async (req, res, next) => {
 
 exports.makeSuperAdmin = async (req, res, next) => {
     try {
-        const token = req.headers?.authorization?.split(' ')[1];
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+        if (!req.user) throw new AuthenticateError('User not found');
         const userService = new UserService();
-        const user = await userService.makeSuperAdmin(decoded.id);
+        const user = await userService.makeSuperAdmin(req.user.id);
 
         return res.status(200).json({
             message: 'Successfully make user super admin',
@@ -127,10 +126,12 @@ exports.makeSuperAdmin = async (req, res, next) => {
 
 exports.makeAdmin = async (req, res, next) => {
     try {
-        const { id } = req.body;
+        const token = req.headers?.authorization?.split(' ')[1];
 
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
         const userService = new UserService();
-        const user = await userService.makeAdmin(id);
+        const user = await userService.makeAdmin(decoded.id);
 
         return res.status(200).json({
             message: 'Successfully make user admin',

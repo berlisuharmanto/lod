@@ -8,17 +8,10 @@ const jwt = require('jsonwebtoken');
 
 exports.get = async (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.id;
-
-        const userService = new UserService();
-
-        const user = await userService.getById(userId);
+        const user = req.user;
 
         const cartService = new CartService();
-        const carts = await cartService.get(userId);
+        const carts = await cartService.get(user.id);
 
         data = [];
 
@@ -59,15 +52,12 @@ exports.get = async (req, res, next) => {
 
 exports.getById = async (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.id;
+        const user = req.user.id;
 
         const { id } = req.params;
 
         const cartService = new CartService();
-        const cart = await cartService.getById(id, userId);
+        const cart = await cartService.getById(id, user.id);
 
         return res.status(200).json({
             message: 'Successfully get cart',
@@ -84,18 +74,14 @@ exports.insert = async (req, res, next) => {
 
         const { menuId, quantity } = req.body;
 
-        const token = req.headers?.authorization?.split(' ')[1];
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        const userId = decoded.id;
+        const user = req.user;
 
         const cartService = new CartService();
         const cart = await cartService.insert({
             req: {
                 menuId,
                 quantity,
-                userId: userId
+                userId: user.id
             }
         });
 
@@ -115,14 +101,10 @@ exports.update = async (req, res, next) => {
         const { id } = req.params;
         const { menuId, quantity } = req.body;
 
-        const token = req.headers?.authorization?.split(' ')[1];
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        const userId = decoded.id;
+        const user = req.user;
 
         const cartService = new CartService();
-        const cart = await cartService.update(id, userId, {
+        const cart = await cartService.update(id, user.id, {
             req: {
                 menuId,
                 quantity
@@ -142,14 +124,10 @@ exports.delete = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        const token = req.headers?.authorization?.split(' ')[1];
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        const userId = decoded.id;
+        const user = req.user;
 
         const cartService = new CartService();
-        const cart = await cartService.delete(id, userId);
+        const cart = await cartService.delete(id, user.id);
 
         return res.status(200).json({
             message: 'Successfully delete cart',
@@ -162,15 +140,10 @@ exports.delete = async (req, res, next) => {
 
 exports.checkout = async (req, res, next) => {
     try {
-        const token = req.headers?.authorization?.split(' ')[1];
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        const userId = decoded.id;
         const userService = new UserService();
-        const user = await userService.getById(userId);
+        const user = req.user;
 
-        const userUpdate = await userService.update(userId, {
+        const userUpdate = await userService.update(user.id, {
             req: {
                 name: user.name,
                 email: user.email,
@@ -179,7 +152,7 @@ exports.checkout = async (req, res, next) => {
         });
 
         const cartService = new CartService();
-        const carts = await cartService.get(userId);
+        const carts = await cartService.get(user.id);
 
         const cartData = [];
 
@@ -204,7 +177,7 @@ exports.checkout = async (req, res, next) => {
         });
         const transaction = await transactionService.insert({
             req: {
-                userId: userId,
+                userId: user.id,
                 totalPrice: cartData.reduce((total, cart) => {
                     return total + cart.price;
                 }, 0),
@@ -212,7 +185,7 @@ exports.checkout = async (req, res, next) => {
             }
         });
 
-        const cart = await cartService.checkout(userId);
+        const cart = await cartService.checkout(user.id);
 
         const transactionSuccess = await transactionService.getById(transaction.id);
 

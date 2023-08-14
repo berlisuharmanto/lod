@@ -1,5 +1,6 @@
 const router = require('express').Router();
 
+const authenticate = require('../Middleware/auth');
 const adminMiddleware = require('../Middleware/admin');
 const menuController = require('../Controllers/menu.controller');
 const adminController = require('../Controllers/admin.controller');
@@ -7,7 +8,7 @@ const adminController = require('../Controllers/admin.controller');
 router.post('/login', adminController.login)
 
 //ONE TIME ONLY!!!
-router.post('/make-super-admin', adminController.makeSuperAdmin);
+router.post('/make-super-admin', authenticate, adminController.makeSuperAdmin);
 
 router.get('/menu', adminMiddleware, menuController.get);
 router.get('/menu/:id', adminMiddleware, menuController.getById);
