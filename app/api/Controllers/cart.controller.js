@@ -216,8 +216,6 @@ exports.checkout = async (req, res, next) => {
 
         const transactionSuccess = await transactionService.getById(transaction.id);
 
-        console.log(transactionSuccess);
-
         return res.status(200).json({
             message: 'Successfully checkout cart',
             data: {

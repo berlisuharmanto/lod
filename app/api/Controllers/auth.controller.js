@@ -25,8 +25,6 @@ exports.register = async (req, res, next) => {
             }
         });
 
-        console.log(newUser);
-
         const userWithoutPassword = {
             id: newUser.id,
             name: newUser.name,
@@ -44,7 +42,8 @@ exports.register = async (req, res, next) => {
         return res.status(201).json({
             message: 'Successfully registered',
             data: userWithoutPassword,
-            token: token
+            token: token,
+            token_expired: jwt.decode(token).exp
         });
     } catch (error) {
         next(error);
@@ -83,7 +82,8 @@ exports.login = async (req, res, next) => {
         return res.status(200).json({
             message: 'Successfully logged in',
             data: userWithoutPassword,
-            token: token
+            token: token,
+            token_expired: jwt.decode(token).exp
         });
     } catch (error) {
         next(error);

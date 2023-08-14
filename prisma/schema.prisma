@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Menu {
-  id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement()) @unique
   name String @db.VarChar(255)
   description String @db.VarChar(255)
   price Int
@@ -20,7 +20,7 @@ model Menu {
 }
 
 model Cart {
-  id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement()) @unique
   userId Int
   menuId Int
   quantity Int
@@ -31,7 +31,7 @@ model Cart {
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement()) @unique
   name String @db.VarChar(255)
   email String @db.VarChar(255) @unique
   password String @db.VarChar(255)
@@ -44,7 +44,7 @@ model User {
 }
 
 model Role {
-  id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement()) @unique
   name String @db.VarChar(255)
   role Role_User[] @relation("RoleToRole")
   createdAt DateTime @default(now())
@@ -52,7 +52,7 @@ model Role {
 }
 
 model Role_User {
-  id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement()) @unique
   userId Int
   roleId Int
   user User @relation("RoleToUser", fields: [userId], references: [id])
@@ -62,7 +62,7 @@ model Role_User {
 }
 
 model Transaction {
-  id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement()) @unique
   userId Int
   totalPrice Int
   user User @relation("TransactionToUser", fields: [userId], references: [id])
@@ -72,7 +72,7 @@ model Transaction {
 }
 
 model Transaction_List {
-  id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement()) @unique
   transactionId Int
   name String @db.VarChar(255)
   price Int
