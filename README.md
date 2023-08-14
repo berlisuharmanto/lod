@@ -15,6 +15,8 @@ JWT_SECRET="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmF
 
 Jalankan `npx prisma migrate dev --name innit` untuk migrasi pertama kali
 
+Semua database service dijalankan menggunakan ORM Prisma
+
 ### `npm run start`
 
 Untuk dokumentasi API terdapat pada
