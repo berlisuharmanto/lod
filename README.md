@@ -1,6 +1,9 @@
 # Getting Started with LOD BACKEND
+Clone project
 
-Untuk .env sesuaikan dengan url api
+```
+git clone https://github.com/berlisuharmanto/lod.git
+```
 
 Jalankan `npm i` untuk install dependency
 
