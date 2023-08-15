@@ -26,12 +26,6 @@ const authenticate = async (req,res,next) => {
         
         const userService = new UserService();
         const user = await userService.getById(decoded.id);
-        user = {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            address: user.address
-        }
         if (!user) {
             throw new AuthenticationError('Unauthorized');
         }
