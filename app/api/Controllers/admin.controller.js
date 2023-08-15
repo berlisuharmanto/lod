@@ -78,7 +78,15 @@ exports.getById = async (req, res, next) => {
 
         return res.status(200).json({
             message: 'Successfully get user',
-            data: user
+            data: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role.map(role => role.roleId),
+                carts: user.cart,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            }
         });
     } catch (error) {
         next(error);
@@ -102,12 +110,9 @@ exports.makeSuperAdmin = async (req, res, next) => {
 
 exports.makeAdmin = async (req, res, next) => {
     try {
-        const token = req.headers?.authorization?.split(' ')[1];
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
+        if (!req.user) throw new AuthenticateError('User not found');
         const userService = new UserService();
-        const user = await userService.makeAdmin(decoded.id);
+        const user = await userService.makeAdmin(req.user.id);
 
         return res.status(200).json({
             message: 'Successfully make user admin',
@@ -143,7 +148,14 @@ exports.delete = async (req, res, next) => {
 
         return res.status(200).json({
             message: 'Successfully delete user',
-            data: user
+            data: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                carts: user.cart,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            }
         });
     } catch (error) {
         next(error);
