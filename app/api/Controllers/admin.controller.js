@@ -82,7 +82,6 @@ exports.getById = async (req, res, next) => {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                role: user.role.map(role => role.roleId),
                 carts: user.cart,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt
