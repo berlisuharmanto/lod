@@ -15,7 +15,15 @@ const authenticate = async (req,res,next) => {
         if (token == null) {
             throw new AuthenticationError('Unauthorized');
         }
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        let decoded;
+
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (error) {
+            throw new AuthenticationError('Unauthorized');
+        }
+
         const userService = new UserService();
         const user = await userService.getById(decoded.id);
         const admin = await userService.getAdmin(decoded.id);
